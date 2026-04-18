@@ -1,14 +1,16 @@
 # Photos go here
 
-Drop 6 images in this folder named exactly:
+Drop any number of images named in sequence:
 
 - `photo-1.jpg`
 - `photo-2.jpg`
 - `photo-3.jpg`
-- `photo-4.jpg`
-- `photo-5.jpg`
-- `photo-6.jpg`
+- ...and so on
 
-Any missing slot shows a "Drop a photo here" placeholder on the site — so you can deploy now and add photos later.
+The gallery auto-discovers up to 60 photos and renders them in order. Just add the next number (`photo-7.jpg`, `photo-8.jpg`, etc.) and it'll show up on the site — no HTML edits needed.
 
-JPG, PNG, and WebP all work (keep the `.jpg` extension or update the `<img src>` in `index.html`). Portrait orientation looks best (roughly 4:5). Large originals are fine — Cloudflare serves them quickly, but if you want to shrink them, aim for ~1600px on the long edge.
+**Supported extensions:** `.jpg`, `.jpeg`, `.png`, `.webp` (the site tries each in that order).
+
+**Sizing tips:** any aspect ratio works — the layout is a masonry grid that preserves each photo's natural shape. For best loading, aim for ~1600px on the long edge.
+
+**Captions:** the first 12 slots have witty default captions in `script.js` (edit `GALLERY_CAPTIONS` to change them). Anything beyond that gets a generic fallback caption — add more entries to the array if you want something specific.
