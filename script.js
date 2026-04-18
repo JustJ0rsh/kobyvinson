@@ -35,6 +35,70 @@ const resolvePhoto = async (index) => {
 
 const padIndex = (n) => String(n).padStart(2, '0');
 
+const buildCard = (photo, animDelay) => {
+  const figure = document.createElement('figure');
+  figure.className = 'card';
+  figure.style.animationDelay = `${animDelay}ms`;
+
+  const img = document.createElement('img');
+  img.src = photo.src;
+  img.alt = `Koby Vinson, photo ${padIndex(photo.index)}`;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  if (photo.width && photo.height) {
+    img.width = photo.width;
+    img.height = photo.height;
+  }
+
+  const caption = document.createElement('figcaption');
+  const numSpan = document.createElement('span');
+  numSpan.textContent = padIndex(photo.index);
+  const text = document.createTextNode(
+    ' ' + (GALLERY_CAPTIONS[photo.index - 1] || 'Further evidence, filed accordingly.')
+  );
+  caption.append(numSpan, text);
+
+  figure.append(img, caption);
+  figure.addEventListener('click', () => openLightbox(photo, caption.textContent.trim()));
+  return figure;
+};
+
+const pickColumnCount = (width) => {
+  if (width < 600) return 1;
+  if (width < 900) return 2;
+  return 3;
+};
+
+// Balanced masonry: place each photo into the currently shortest column,
+// using the photo's natural aspect ratio to estimate rendered height.
+const layoutPhotos = (grid, photos) => {
+  grid.textContent = '';
+  const gridWidth = grid.clientWidth || grid.getBoundingClientRect().width;
+  const colCount = pickColumnCount(window.innerWidth);
+  const gap = 16;
+  const colWidth = Math.max(1, (gridWidth - gap * (colCount - 1)) / colCount);
+
+  const cols = [];
+  const heights = new Array(colCount).fill(0);
+  for (let i = 0; i < colCount; i++) {
+    const col = document.createElement('div');
+    col.className = 'col';
+    cols.push(col);
+    grid.appendChild(col);
+  }
+
+  photos.forEach((photo, i) => {
+    let target = 0;
+    for (let c = 1; c < colCount; c++) {
+      if (heights[c] < heights[target]) target = c;
+    }
+    const card = buildCard(photo, Math.min(i * 60, 600));
+    cols[target].appendChild(card);
+    const ratio = photo.height / photo.width;
+    heights[target] += colWidth * ratio + gap;
+  });
+};
+
 const renderGallery = async () => {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
@@ -54,36 +118,17 @@ const renderGallery = async () => {
     return;
   }
 
-  const fragment = document.createDocumentFragment();
-  photos.forEach((photo, i) => {
-    const figure = document.createElement('figure');
-    figure.className = 'card';
-    figure.style.animationDelay = `${Math.min(i * 60, 600)}ms`;
+  layoutPhotos(grid, photos);
 
-    const img = document.createElement('img');
-    img.src = photo.src;
-    img.alt = `Koby Vinson, photo ${padIndex(photo.index)}`;
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    if (photo.width && photo.height) {
-      img.width = photo.width;
-      img.height = photo.height;
-    }
-
-    const caption = document.createElement('figcaption');
-    const numSpan = document.createElement('span');
-    numSpan.textContent = padIndex(photo.index);
-    const text = document.createTextNode(
-      ' ' + (GALLERY_CAPTIONS[photo.index - 1] || 'Further evidence, filed accordingly.')
-    );
-    caption.append(numSpan, text);
-
-    figure.append(img, caption);
-    figure.addEventListener('click', () => openLightbox(photo, caption.textContent.trim()));
-    fragment.appendChild(figure);
+  let lastCols = pickColumnCount(window.innerWidth);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    const next = pickColumnCount(window.innerWidth);
+    if (next === lastCols) return;
+    lastCols = next;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => layoutPhotos(grid, photos), 120);
   });
-
-  grid.appendChild(fragment);
 };
 
 // Lightbox
