@@ -203,6 +203,91 @@ const io = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.stat .n').forEach((el) => io.observe(el));
 
+// Guestbook: fetch approved comments, render, and handle submissions.
+const userQuotes = document.getElementById('user-quotes');
+
+const formatDate = (iso) => {
+  try {
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric',
+    });
+  } catch { return ''; }
+};
+
+const renderComment = (c) => {
+  const bq = document.createElement('blockquote');
+  const p = document.createElement('p');
+  p.textContent = '\u201C' + c.body + '\u201D';
+  const cite = document.createElement('cite');
+  cite.textContent = '\u2014 ' + c.name + (c.created_at ? ' \u00B7 ' + formatDate(c.created_at) : '');
+  bq.append(p, cite);
+  return bq;
+};
+
+const loadComments = async () => {
+  if (!userQuotes) return false;
+  try {
+    const res = await fetch('/api/comments', { headers: { accept: 'application/json' } });
+    if (!res.ok) return false;
+    const ctype = res.headers.get('content-type') || '';
+    if (!ctype.includes('application/json')) return false;
+    const { comments } = await res.json();
+    userQuotes.textContent = '';
+    comments.forEach((c) => userQuotes.appendChild(renderComment(c)));
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const commentForm = document.getElementById('comment-form');
+const formMsg = document.getElementById('form-msg');
+if (commentForm && formMsg) {
+  commentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(commentForm);
+    const submitBtn = commentForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    formMsg.className = 'form-msg';
+    formMsg.textContent = 'Submitting...';
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: fd.get('name'),
+          body: fd.get('body'),
+          website: fd.get('website'),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        formMsg.textContent = 'Filed. Thanks for the testimony.';
+        formMsg.className = 'form-msg ok';
+        commentForm.reset();
+        loadComments();
+      } else {
+        formMsg.textContent = data.error || 'Something went wrong. Try again.';
+        formMsg.className = 'form-msg err';
+      }
+    } catch {
+      formMsg.textContent = 'Network error. Try again.';
+      formMsg.className = 'form-msg err';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+// Only show the guestbook form when the API is actually reachable.
+// Until the Worker is deployed, hide the form so the page still reads clean.
+(async () => {
+  const apiLive = await loadComments();
+  if (!apiLive && commentForm) {
+    commentForm.style.display = 'none';
+  }
+})();
+
 // Copy-to-clipboard for the share button
 const shareBtn = document.getElementById('share');
 const toast = document.getElementById('share-toast');

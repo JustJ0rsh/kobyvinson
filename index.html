@@ -97,6 +97,23 @@
       <h2>The Guestbook</h2>
       <p>Comments from friends, family, and people who wandered in by accident.</p>
     </div>
+    <form class="guestbook-form" id="comment-form" autocomplete="off">
+      <h3>Leave a note</h3>
+      <label>
+        <span>Name</span>
+        <input name="name" maxlength="60" required />
+      </label>
+      <label>
+        <span>Your testimony</span>
+        <textarea name="body" maxlength="500" rows="3" required placeholder="Keep it short. Keep it honest. Keep it tasteful(ish)."></textarea>
+      </label>
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="form-row">
+        <button type="submit">Submit testimony</button>
+        <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
+      </div>
+    </form>
+    <div class="quotes quotes-user" id="user-quotes" aria-live="polite"></div>
     <div class="quotes">
       <blockquote>
         <p>&ldquo;I would take a bullet for him. Probably in the foot. But still.&rdquo;</p>

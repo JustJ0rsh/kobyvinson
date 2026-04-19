@@ -271,6 +271,96 @@ a { color: var(--ink); text-decoration: none; }
 
 /* testimony */
 .testimony { padding: 120px 40px; max-width: var(--max); margin: 0 auto; }
+
+/* guestbook form */
+.guestbook-form {
+  max-width: 640px;
+  margin: 0 auto 56px;
+  padding: 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  position: relative;
+}
+.guestbook-form h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 22px;
+  margin: 0 0 20px;
+  color: var(--gold-soft);
+}
+.guestbook-form label {
+  display: block;
+  margin-bottom: 16px;
+}
+.guestbook-form label span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+.guestbook-form input,
+.guestbook-form textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.guestbook-form textarea { resize: vertical; min-height: 90px; }
+.guestbook-form input:focus,
+.guestbook-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.guestbook-form .hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px; height: 1px;
+  opacity: 0;
+}
+.guestbook-form .form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.guestbook-form button {
+  background: var(--gold);
+  color: #1a1408;
+  border: none;
+  padding: 12px 28px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.guestbook-form button:hover { background: var(--gold-soft); }
+.guestbook-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-msg {
+  font-size: 13px;
+  color: var(--ink-dim);
+  min-height: 16px;
+}
+.form-msg.ok { color: var(--gold-soft); }
+.form-msg.err { color: #e58e8e; }
+
+.quotes-user {
+  margin-bottom: 20px;
+}
+.quotes-user:empty { display: none; }
+.quotes-user blockquote { border-color: rgba(217, 168, 74, 0.28); }
+
 .quotes {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

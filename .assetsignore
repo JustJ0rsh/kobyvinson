@@ -1,0 +1,13 @@
+.git
+.claude
+.wrangler
+node_modules
+src
+migrations
+wrangler.jsonc
+package.json
+package-lock.json
+.assetsignore
+.DS_Store
+**/.DS_Store
+/README.md
