@@ -1,14 +1,23 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "kobyvinson",
+  "main": "src/worker.js",
   "compatibility_date": "2026-04-15",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kobyvinson-comments",
+      "database_id": "6ecc476d-014b-411f-9077-261f7c8e150f"
+    }
   ]
 }
